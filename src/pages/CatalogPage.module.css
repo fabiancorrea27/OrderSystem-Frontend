@@ -36,9 +36,11 @@
 .stateError { color: var(--clr-danger); }
 
 .grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  display: flex;
+  flex-wrap: wrap;
   gap: 18px;
+  justify-content: flex-start;
+  width: 100%;
 }
 
 .card {
@@ -49,7 +51,21 @@
   flex-direction: column;
   overflow: hidden;
   transition: border-color .15s;
+  flex: 1 1 240px;
+  min-width: 240px;
+  max-width: 320px;
 }
+
+@media (max-width: 640px) {
+  .main {
+    padding: 24px 16px;
+  }
+
+  .grid {
+    justify-content: center;
+  }
+}
+
 .card:hover {
   border-color: var(--clr-primary);
 }
