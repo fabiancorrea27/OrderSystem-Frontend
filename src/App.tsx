@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { AuthProvider, useAuth } from './context/AuthContext';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { AuthProvider } from './context/AuthContext';
 import { CartProvider } from './context/CartContext';
 import Navbar from './components/Navbar';
 import LoginPage from './pages/LoginPage';
@@ -8,43 +8,71 @@ import CatalogPage from './pages/CatalogPage';
 import CartPage from './pages/CartPage';
 import OrdersPage from './pages/OrdersPage';
 import AdminPage from './pages/AdminPage';
+import { RequireAuth, RequireAdmin, PublicRoute } from './routes/PrivateRoute';
 import './App.css';
-
-type Page = 'login' | 'register' | 'catalog' | 'cart' | 'orders' | 'admin';
-
-function AppInner() {
-  const { user } = useAuth();
-  const [page, setPage] = useState<Page>(user ? 'catalog' : 'login');
-
-  function navigate(p: string) {
-    setPage(p as Page);
-  }
-
-  function renderPage() {
-    switch (page) {
-      case 'login':    return <LoginPage onNavigate={navigate} />;
-      case 'register': return <RegisterPage onNavigate={navigate} />;
-      case 'catalog':  return <CatalogPage />;
-      case 'cart':     return <CartPage onNavigate={navigate} />;
-      case 'orders':   return <OrdersPage />;
-      case 'admin':    return <AdminPage onNavigate={navigate} />;
-      default:         return <CatalogPage />;
-    }
-  }
-
-  return (
-    <>
-      <Navbar onNavigate={navigate} currentPage={page} />
-      {renderPage()}
-    </>
-  );
-}
 
 export default function App() {
   return (
     <AuthProvider>
       <CartProvider>
-        <AppInner />
+        <BrowserRouter>
+          <Navbar />
+          <Routes>
+            <Route
+              path="/"
+              element={<Navigate to="/catalog" replace />}
+            />
+            <Route
+              path="/login"
+              element={
+                <PublicRoute>
+                  <LoginPage />
+                </PublicRoute>
+              }
+            />
+            <Route
+              path="/register"
+              element={
+                <PublicRoute>
+                  <RegisterPage />
+                </PublicRoute>
+              }
+            />
+            <Route
+              path="/catalog"
+              element={
+                <RequireAuth>
+                  <CatalogPage />
+                </RequireAuth>
+              }
+            />
+            <Route
+              path="/cart"
+              element={
+                <RequireAuth>
+                  <CartPage />
+                </RequireAuth>
+              }
+            />
+            <Route
+              path="/orders"
+              element={
+                <RequireAuth>
+                  <OrdersPage />
+                </RequireAuth>
+              }
+            />
+            <Route
+              path="/admin"
+              element={
+                <RequireAdmin>
+                  <AdminPage />
+                </RequireAdmin>
+              }
+            />
+            <Route path="*" element={<Navigate to="/catalog" replace />} />
+          </Routes>
+        </BrowserRouter>
       </CartProvider>
     </AuthProvider>
   );

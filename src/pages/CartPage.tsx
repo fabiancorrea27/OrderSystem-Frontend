@@ -1,14 +1,12 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
 import { orderService } from '../services/orderService';
 import { useAuth } from '../context/AuthContext';
 import styles from './CartPage.module.css';
 
-interface CartPageProps {
-  onNavigate: (page: string) => void;
-}
-
-export default function CartPage({ onNavigate }: CartPageProps) {
+export default function CartPage() {
+  const navigate = useNavigate();
   const { items, removeItem, updateQty, clearCart, total } = useCart();
   const { user } = useAuth();
   const [loading, setLoading] = useState(false);
@@ -19,7 +17,7 @@ export default function CartPage({ onNavigate }: CartPageProps) {
     return (
       <div className={styles.state}>
         <p>Debes iniciar sesión para ver tu carrito.</p>
-        <button className={styles.goBtn} onClick={() => onNavigate('login')}>
+        <button className={styles.goBtn} onClick={() => navigate('/login')}>
           Iniciar sesión
         </button>
       </div>
@@ -33,10 +31,10 @@ export default function CartPage({ onNavigate }: CartPageProps) {
         <h2 className={styles.successTitle}>¡Pedido creado!</h2>
         <p className={styles.successMsg}>Tu pedido fue registrado correctamente.</p>
         <div className={styles.successActions}>
-          <button className={styles.primaryBtn} onClick={() => onNavigate('orders')}>
+          <button className={styles.primaryBtn} onClick={() => navigate('/orders')}>
             Ver mis pedidos
           </button>
-          <button className={styles.outlineBtn} onClick={() => onNavigate('catalog')}>
+          <button className={styles.outlineBtn} onClick={() => navigate('/catalog')}>
             Seguir comprando
           </button>
         </div>
@@ -49,7 +47,7 @@ export default function CartPage({ onNavigate }: CartPageProps) {
       <div className={styles.state}>
         <span className={styles.emptyIcon}>🛒</span>
         <p className={styles.emptyMsg}>Tu carrito está vacío.</p>
-        <button className={styles.goBtn} onClick={() => onNavigate('catalog')}>
+        <button className={styles.goBtn} onClick={() => navigate('/catalog')}>
           Ver catálogo
         </button>
       </div>

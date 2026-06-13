@@ -1,25 +1,22 @@
+import { NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
 import styles from './Navbar.module.css';
 
-interface NavbarProps {
-  onNavigate: (page: string) => void;
-  currentPage: string;
-}
-
-export default function Navbar({ onNavigate, currentPage }: NavbarProps) {
+export default function Navbar() {
   const { user, logout, isAdmin } = useAuth();
   const { count } = useCart();
+  const navigate = useNavigate();
 
   function handleLogout() {
     logout();
-    onNavigate('login');
+    navigate('/login');
   }
 
   return (
     <header className={styles.header}>
       <div className={styles.inner}>
-        <button className={styles.brand} onClick={() => onNavigate('catalog')}>
+        <button className={styles.brand} onClick={() => navigate('/catalog')}>
           <span className={styles.brandIcon}>📦</span>
           <span className={styles.brandName}>OrderSystem</span>
         </button>
@@ -27,25 +24,25 @@ export default function Navbar({ onNavigate, currentPage }: NavbarProps) {
         <nav className={styles.nav}>
           {user ? (
             <>
-              <button
-                className={`${styles.link} ${currentPage === 'catalog' ? styles.active : ''}`}
-                onClick={() => onNavigate('catalog')}
+              <NavLink
+                to="/catalog"
+                className={({ isActive }) => `${styles.link} ${isActive ? styles.active : ''}`}
               >
                 Catálogo
-              </button>
-              <button
-                className={`${styles.link} ${currentPage === 'orders' ? styles.active : ''}`}
-                onClick={() => onNavigate('orders')}
+              </NavLink>
+              <NavLink
+                to="/orders"
+                className={({ isActive }) => `${styles.link} ${isActive ? styles.active : ''}`}
               >
                 Mis pedidos
-              </button>
+              </NavLink>
               {isAdmin && (
-                <button
-                  className={`${styles.link} ${currentPage === 'admin' ? styles.active : ''}`}
-                  onClick={() => onNavigate('admin')}
+                <NavLink
+                  to="/admin"
+                  className={({ isActive }) => `${styles.link} ${isActive ? styles.active : ''}`}
                 >
                   Admin
-                </button>
+                </NavLink>
               )}
             </>
           ) : null}
@@ -55,8 +52,8 @@ export default function Navbar({ onNavigate, currentPage }: NavbarProps) {
           {user ? (
             <>
               <button
-                className={`${styles.cartBtn} ${currentPage === 'cart' ? styles.active : ''}`}
-                onClick={() => onNavigate('cart')}
+                className={styles.cartBtn}
+                onClick={() => navigate('/cart')}
                 aria-label={`Carrito — ${count} productos`}
               >
                 🛒
@@ -70,10 +67,10 @@ export default function Navbar({ onNavigate, currentPage }: NavbarProps) {
             </>
           ) : (
             <>
-              <button className={styles.link} onClick={() => onNavigate('login')}>
+              <button className={styles.link} onClick={() => navigate('/login')}>
                 Iniciar sesión
               </button>
-              <button className={styles.registerBtn} onClick={() => onNavigate('register')}>
+              <button className={styles.registerBtn} onClick={() => navigate('/register')}>
                 Registrarse
               </button>
             </>

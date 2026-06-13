@@ -1,14 +1,12 @@
 import { useState, useEffect, type FormEvent } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { productService } from '../services/productService';
 import { useAuth } from '../context/AuthContext';
 import type { Product } from '../types';
 import styles from './AdminPage.module.css';
 
-interface AdminPageProps {
-  onNavigate: (page: string) => void;
-}
-
-export default function AdminPage({ onNavigate }: AdminPageProps) {
+export default function AdminPage() {
+  const navigate = useNavigate();
   const { isAdmin } = useAuth();
   const [products, setProducts] = useState<Product[]>([]);
   const [name, setName] = useState('');
@@ -27,7 +25,7 @@ export default function AdminPage({ onNavigate }: AdminPageProps) {
       <div className={styles.state}>
         <span className={styles.icon}>🚫</span>
         <p>Acceso restringido a administradores.</p>
-        <button className={styles.backBtn} onClick={() => onNavigate('catalog')}>
+        <button className={styles.backBtn} onClick={() => navigate('/catalog')}>
           Volver al catálogo
         </button>
       </div>

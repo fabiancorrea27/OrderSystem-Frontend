@@ -1,14 +1,14 @@
 import { useState, type FormEvent } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { authService } from '../services/authService';
 import { useAuth } from '../context/AuthContext';
 import styles from './AuthPage.module.css';
 
-interface LoginPageProps {
-  onNavigate: (page: string) => void;
-}
-
-export default function LoginPage({ onNavigate }: LoginPageProps) {
+export default function LoginPage() {
   const { login } = useAuth();
+  const navigate = useNavigate();
+  const location = useLocation();
+  const from = (location.state as { from?: { pathname?: string } })?.from?.pathname ?? '/catalog';
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -21,7 +21,7 @@ export default function LoginPage({ onNavigate }: LoginPageProps) {
     try {
       const { token } = await authService.login(email, password);
       login(token);
-      onNavigate('catalog');
+      navigate(from, { replace: true });
     } catch {
       setError('Correo o contraseña incorrectos.');
     } finally {
@@ -74,7 +74,7 @@ export default function LoginPage({ onNavigate }: LoginPageProps) {
 
         <p className={styles.switchText}>
           ¿No tienes cuenta?{' '}
-          <button className={styles.switchLink} onClick={() => onNavigate('register')}>
+          <button className={styles.switchLink} onClick={() => navigate('/register')}>
             Regístrate
           </button>
         </p>

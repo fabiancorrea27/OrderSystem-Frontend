@@ -1,20 +1,30 @@
-import { useState, useEffect } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 import { orderService } from '../services/orderService';
-import type { Order } from '../types';
+import { productService } from '../services/productService';
+import type { Order, Product } from '../types';
 import styles from './OrdersPage.module.css';
 
 export default function OrdersPage() {
   const [orders, setOrders] = useState<Order[]>([]);
+  const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [expanded, setExpanded] = useState<string | null>(null);
 
   useEffect(() => {
-    orderService.getMyOrders()
-      .then(setOrders)
+    Promise.all([orderService.getMyOrders(), productService.getAll()])
+      .then(([ordersRes, productsRes]) => {
+        setOrders(ordersRes);
+        setProducts(productsRes);
+      })
       .catch(() => setError('No se pudieron cargar los pedidos.'))
       .finally(() => setLoading(false));
   }, []);
+
+  const productMap = useMemo(
+    () => Object.fromEntries(products.map((product) => [product.id, product.name])),
+    [products],
+  );
 
   if (loading) return <div className={styles.state}>Cargando pedidos...</div>;
   if (error) return <div className={`${styles.state} ${styles.stateError}`}>{error}</div>;
@@ -83,7 +93,7 @@ export default function OrdersPage() {
                     <tbody>
                       {order.items.map((item, i) => (
                         <tr key={i}>
-                          <td>{item.productId.slice(0, 8)}…</td>
+                          <td>{productMap[item.productId] ?? item.productId.slice(0, 8) + '…'}</td>
                           <td>${item.price.toLocaleString('es-CO', { minimumFractionDigits: 2 })}</td>
                           <td>{item.quantity}</td>
                           <td>${item.subtotal.toLocaleString('es-CO', { minimumFractionDigits: 2 })}</td>

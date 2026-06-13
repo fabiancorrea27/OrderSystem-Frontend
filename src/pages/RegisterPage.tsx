@@ -1,12 +1,10 @@
 import { useState, type FormEvent } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { authService } from '../services/authService';
 import styles from './AuthPage.module.css';
 
-interface RegisterPageProps {
-  onNavigate: (page: string) => void;
-}
-
-export default function RegisterPage({ onNavigate }: RegisterPageProps) {
+export default function RegisterPage() {
+  const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -22,7 +20,7 @@ export default function RegisterPage({ onNavigate }: RegisterPageProps) {
     setLoading(true);
     try {
       await authService.register(email, password);
-      onNavigate('login');
+      navigate('/login');
     } catch (err: any) {
       const msg = err?.response?.data?.error;
       setError(msg ?? 'No se pudo crear la cuenta. Intenta de nuevo.');
@@ -76,7 +74,7 @@ export default function RegisterPage({ onNavigate }: RegisterPageProps) {
 
         <p className={styles.switchText}>
           ¿Ya tienes cuenta?{' '}
-          <button className={styles.switchLink} onClick={() => onNavigate('login')}>
+          <button className={styles.switchLink} onClick={() => navigate('/login')}>
             Inicia sesión
           </button>
         </p>
