@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo, type FormEvent } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { productService } from '../services/productService';
 import { useAuth } from '../context/AuthContext';
@@ -39,7 +39,7 @@ export default function AdminPage() {
     );
   }
 
-  async function handleSubmit(e: FormEvent) {
+  async function handleSubmit(e: React.SyntheticEvent) {
     e.preventDefault();
     setError('');
     setSuccess('');
