@@ -159,6 +159,74 @@
   color: var(--clr-primary);
 }
 
+/* Stock layout and controls */
+.productInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+
+.productStock {
+  font-size: 13px;
+  color: var(--clr-muted);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.stockBadge {
+  display: inline-block;
+  padding: 4px 8px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+  background: var(--clr-primary-lt);
+  color: var(--clr-primary-dk);
+}
+
+.lowStock {
+  color: var(--clr-accent);
+  font-weight: 700;
+  margin-left: 6px;
+}
+
+.stockUpdate {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  margin-left: auto;
+}
+
+.inputSmall {
+  width: 96px;
+  padding: 6px 8px;
+  border: 1px solid var(--clr-border);
+  border-radius: 6px;
+  background: var(--clr-surface);
+}
+
+.stockBtn {
+  background: var(--clr-primary);
+  color: #fff;
+  padding: 6px 10px;
+  border-radius: 6px;
+  font-weight: 700;
+  border: none;
+}
+.stockBtn:hover:not(:disabled) { background: var(--clr-primary-dk); }
+
+/* Alert box for low stock */
+.alertBox {
+  margin-top: 12px;
+  padding: 12px 14px;
+  border-radius: 8px;
+  background: var(--clr-accent-lt);
+  color: var(--clr-accent);
+  border: 1px solid rgba(231,111,81,0.18);
+  font-size: 14px;
+}
+
 /* Restricted state */
 .state {
   flex: 1;

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { productService } from '../services/productService';
 import { useCart } from '../context/CartContext';
 import type { Product } from '../types';
@@ -6,6 +6,10 @@ import styles from './CatalogPage.module.css';
 
 export default function CatalogPage() {
   const [products, setProducts] = useState<Product[]>([]);
+  const sorted = useMemo(
+    () => [...products].sort((a, b) => (a.stock === 0 ? 1 : 0) - (b.stock === 0 ? 1 : 0)),
+    [products],
+  );
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const { addItem, items } = useCart();
@@ -44,11 +48,11 @@ export default function CatalogPage() {
       </div>
 
       <div className={styles.grid}>
-        {products.map((product) => {
+        {sorted.map((product) => {
           const qty = getQtyInCart(product.id);
           const isJustAdded = added === product.id;
           return (
-            <article key={product.id} className={styles.card}>
+            <article key={product.id} className={`${styles.card} ${product.stock === 0 ? styles.cardDisabled : ''}`}>
               <div className={styles.cardImg}>
                 <span className={styles.productEmoji}>📦</span>
               </div>
@@ -57,16 +61,22 @@ export default function CatalogPage() {
                 <p className={styles.price}>
                   ${product.price.toLocaleString('es-CO', { minimumFractionDigits: 2 })}
                 </p>
+                {product.stock === 0 ? (
+                  <span className={styles.outOfStock}>Agotado</span>
+                ) : product.stock <= 12 ? (
+                  <span className={styles.lowStock}>⚠ Pocas unidades</span>
+                ) : null}
               </div>
               <div className={styles.cardFooter}>
                 {qty > 0 && (
                   <span className={styles.qtyBadge}>{qty} en carrito</span>
                 )}
                 <button
-                  className={`${styles.addBtn} ${isJustAdded ? styles.addBtnDone : ''}`}
+                  className={`${styles.addBtn} ${isJustAdded ? styles.addBtnDone : ''} ${product.stock === 0 ? styles.addBtnDisabled : ''}`}
                   onClick={() => handleAdd(product)}
+                  disabled={product.stock === 0}
                 >
-                  {isJustAdded ? '✓ Agregado' : 'Agregar al carrito'}
+                  {product.stock === 0 ? 'Agotado' : isJustAdded ? '✓ Agregado' : 'Agregar al carrito'}
                 </button>
               </div>
             </article>

@@ -70,6 +70,12 @@
   border-color: var(--clr-primary);
 }
 
+.cardDisabled {
+  opacity: .45;
+  filter: grayscale(.7);
+  order: 1;
+}
+
 .cardImg {
   background: var(--clr-primary-lt);
   height: 130px;
@@ -83,7 +89,7 @@
 }
 
 .cardBody {
-  padding: 16px 18px 10px;
+  padding: 16px 18px 6px;
   flex: 1;
 }
 
@@ -101,7 +107,7 @@
 }
 
 .cardFooter {
-  padding: 12px 18px 16px;
+  padding: 6px 18px 16px;
   display: flex;
   flex-direction: column;
   gap: 8px;
@@ -115,6 +121,22 @@
   border-radius: 99px;
   align-self: flex-start;
   font-weight: 600;
+}
+
+.outOfStock {
+  display: inline-block;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--clr-danger);
+  margin-top: 6px;
+}
+
+.lowStock {
+  display: inline-block;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--clr-accent);
+  margin-top: 6px;
 }
 
 .addBtn {
@@ -133,4 +155,13 @@
 
 .addBtnDone {
   background: var(--clr-primary) !important;
+}
+
+.addBtnDisabled {
+  background: var(--clr-border) !important;
+  cursor: not-allowed;
+  opacity: .55;
+}
+.addBtnDisabled:hover {
+  background: var(--clr-border) !important;
 }

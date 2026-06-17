@@ -7,8 +7,13 @@ export const productService = {
     return res.data;
   },
 
-  async create(name: string, price: number): Promise<Product> {
-    const res = await api.post('/products', { name, price });
+  async create(name: string, price: number, stock: number): Promise<Product> {
+    const res = await api.post('/products', { name, price, stock });
+    return res.data;
+  },
+
+  async updateStock(productId: string, stock: number): Promise<Product> {
+    const res = await api.put(`/products/${productId}/stock`, { stock });
     return res.data;
   },
 };
