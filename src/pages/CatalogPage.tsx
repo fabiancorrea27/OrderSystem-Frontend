@@ -55,6 +55,9 @@ export default function CatalogPage() {
             <article key={product.id} className={`${styles.card} ${product.stock === 0 ? styles.cardDisabled : ''}`}>
               <div className={styles.cardImg}>
                 <span className={styles.productEmoji}>📦</span>
+                {qty > 0 && (
+                  <span className={styles.cartBadge}>{qty}</span>
+                )}
               </div>
               <div className={styles.cardBody}>
                 <h2 className={styles.name}>{product.name}</h2>
@@ -68,9 +71,6 @@ export default function CatalogPage() {
                 ) : null}
               </div>
               <div className={styles.cardFooter}>
-                {qty > 0 && (
-                  <span className={styles.qtyBadge}>{qty} en carrito</span>
-                )}
                 <button
                   className={`${styles.addBtn} ${isJustAdded ? styles.addBtnDone : ''} ${product.stock === 0 ? styles.addBtnDisabled : ''}`}
                   onClick={() => handleAdd(product)}
