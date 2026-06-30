@@ -18,6 +18,8 @@ function parseJwt(token: string): User | null {
       id: payload['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier'],
       email: payload['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress'],
       role: payload['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'],
+      firstName: payload['firstName'] ?? '',
+      lastName: payload['lastName'] ?? '',
     };
   } catch {
     return null;
