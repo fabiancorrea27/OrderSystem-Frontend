@@ -25,8 +25,18 @@ export interface CartItem {
   quantity: number;
 }
 
+export interface Address {
+  street?: string;
+  city?: string;
+  department?: string;
+}
+
 export interface User {
   id: string;
   email: string;
   role: string;
+  firstName: string;
+  lastName: string;
+  address?: Address;
+  phone?: string;
 }

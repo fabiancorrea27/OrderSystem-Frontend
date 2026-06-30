@@ -103,6 +103,36 @@
   text-decoration: underline;
 }
 
+.row {
+  display: flex;
+  gap: 12px;
+}
+.row .field {
+  flex: 1;
+}
+
+.optional {
+  font-weight: 400;
+  font-size: 11px;
+  color: var(--clr-muted);
+}
+
+.fieldset {
+  border: 1.5px solid var(--clr-border);
+  border-radius: var(--radius-sm);
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.fieldsetLegend {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--clr-neutral);
+  padding: 0 6px;
+}
+
 .hint {
   margin-top: 20px;
   background: var(--clr-bg);

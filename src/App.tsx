@@ -8,6 +8,7 @@ import CatalogPage from './pages/CatalogPage';
 import CartPage from './pages/CartPage';
 import OrdersPage from './pages/OrdersPage';
 import AdminPage from './pages/AdminPage';
+import ProfilePage from './pages/ProfilePage';
 import { RequireAuth, RequireAdmin, PublicRoute } from './routes/PrivateRoute';
 import './App.css';
 
@@ -59,6 +60,14 @@ export default function App() {
               element={
                 <RequireAuth>
                   <OrdersPage />
+                </RequireAuth>
+              }
+            />
+            <Route
+              path="/profile"
+              element={
+                <RequireAuth>
+                  <ProfilePage />
                 </RequireAuth>
               }
             />

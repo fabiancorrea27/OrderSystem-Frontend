@@ -1,0 +1,91 @@
+.wrapper {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 16px;
+  background: var(--clr-bg);
+}
+
+.card {
+  background: var(--clr-surface);
+  border: 1.5px solid var(--clr-border);
+  border-radius: var(--radius-lg);
+  padding: 40px 36px;
+  width: 100%;
+  max-width: 480px;
+}
+
+.cardHeader {
+  text-align: center;
+  margin-bottom: 28px;
+}
+
+.avatar {
+  font-size: 48px;
+  display: block;
+  margin-bottom: 12px;
+}
+
+.title {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--clr-primary-dk);
+}
+
+.infoGrid {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.rowFields {
+  display: flex;
+  gap: 20px;
+}
+.rowFields .field {
+  flex: 1;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--clr-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.value {
+  font-size: 15px;
+  color: var(--clr-neutral);
+}
+
+.muted {
+  color: var(--clr-muted);
+  font-style: italic;
+}
+
+.backBtn {
+  background: var(--clr-primary);
+  color: #fff;
+  padding: 11px;
+  font-size: 15px;
+  font-weight: 600;
+  width: 100%;
+  margin-top: 28px;
+}
+.backBtn:hover {
+  background: var(--clr-primary-dk);
+}
+
+.loading {
+  text-align: center;
+  color: var(--clr-muted);
+  font-size: 15px;
+}

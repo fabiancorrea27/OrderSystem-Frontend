@@ -101,13 +101,22 @@
   justify-content: center;
 }
 
-.email {
-  font-size: 13px;
+.profileBtn {
+  background: none;
   color: var(--clr-muted);
+  font-size: 13px;
+  font-weight: 500;
   max-width: 160px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  padding: 5px 10px;
+  border-radius: var(--radius-sm);
+  transition: color .15s, background .15s;
+}
+.profileBtn:hover {
+  background: var(--clr-bg);
+  color: var(--clr-neutral);
 }
 
 .adminPill {

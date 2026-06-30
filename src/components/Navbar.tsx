@@ -59,7 +59,9 @@ export default function Navbar() {
                 🛒
                 {count > 0 && <span className={styles.badge}>{count}</span>}
               </button>
-              <span className={styles.email}>{user.email}</span>
+              <button className={styles.profileBtn} onClick={() => navigate('/profile')}>
+                {user.firstName ? `${user.firstName} ${user.lastName}` : user.email}
+              </button>
               {isAdmin && <span className={styles.adminPill}>Admin</span>}
               <button className={styles.logoutBtn} onClick={handleLogout}>
                 Salir
