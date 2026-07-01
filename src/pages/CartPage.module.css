@@ -123,6 +123,47 @@
   background: var(--clr-danger-lt);
 }
 
+/* Price change alert */
+.priceAlert {
+  background: var(--clr-accent-lt);
+  border: 1.5px solid var(--clr-accent);
+  border-radius: var(--radius-sm);
+  padding: 10px 14px;
+  margin: -8px 0 8px;
+  font-size: 13px;
+  color: var(--clr-neutral);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.priceAlertActions {
+  display: flex;
+  gap: 8px;
+}
+
+.acceptPriceBtn {
+  background: var(--clr-primary);
+  color: #fff;
+  padding: 5px 12px;
+  font-size: 12px;
+  white-space: nowrap;
+}
+.acceptPriceBtn:hover { background: var(--clr-primary-hover); }
+
+.dismissPriceBtn {
+  background: none;
+  color: var(--clr-danger);
+  border: 1.5px solid var(--clr-danger);
+  padding: 5px 12px;
+  font-size: 12px;
+}
+.dismissPriceBtn:hover {
+  background: var(--clr-danger-lt);
+}
+
 /* Summary panel */
 .summary {
   background: var(--clr-surface);
@@ -183,6 +224,16 @@
   margin-bottom: 12px;
 }
 
+.priceWarningMsg {
+  font-size: 13px;
+  color: var(--clr-accent);
+  background: var(--clr-accent-lt);
+  border-radius: var(--radius-sm);
+  padding: 8px 12px;
+  margin-bottom: 12px;
+  line-height: 1.4;
+}
+
 .checkoutBtn {
   background: var(--clr-primary);
   color: #fff;
@@ -193,7 +244,11 @@
   margin-bottom: 8px;
 }
 .checkoutBtn:hover:not(:disabled) {
-  background: var(--clr-primary-dk);
+  background: var(--clr-primary-hover);
+}
+.checkoutBtn:disabled {
+  opacity: .5;
+  cursor: not-allowed;
 }
 
 .clearBtn {
@@ -230,7 +285,7 @@
   padding: 9px 20px;
   font-size: 14px;
 }
-.goBtn:hover { background: var(--clr-primary-dk); }
+.goBtn:hover { background: var(--clr-primary-hover); }
 
 /* Success screen */
 .successWrap {
@@ -270,7 +325,7 @@
   color: #fff;
   padding: 10px 20px;
 }
-.primaryBtn:hover { background: var(--clr-primary-dk); }
+.primaryBtn:hover { background: var(--clr-primary-hover); }
 
 .outlineBtn {
   background: none;
