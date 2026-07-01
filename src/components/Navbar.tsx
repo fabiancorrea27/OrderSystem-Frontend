@@ -1,11 +1,13 @@
 import { NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
+import { useTheme } from '../hooks/useTheme';
 import styles from './Navbar.module.css';
 
 export default function Navbar() {
   const { user, logout, isAdmin } = useAuth();
   const { count } = useCart();
+  const { theme, toggle } = useTheme();
   const navigate = useNavigate();
 
   function handleLogout() {
@@ -49,6 +51,9 @@ export default function Navbar() {
         </nav>
 
         <div className={styles.actions}>
+          <button className={styles.themeBtn} onClick={toggle} aria-label="Cambiar tema">
+            {theme === 'dark' ? '☀️' : '🌙'}
+          </button>
           {user ? (
             <>
               <button

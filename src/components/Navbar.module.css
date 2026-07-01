@@ -119,6 +119,22 @@
   color: var(--clr-neutral);
 }
 
+.themeBtn {
+  background: var(--clr-bg);
+  font-size: 16px;
+  width: 34px;
+  height: 34px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  border: 1.5px solid var(--clr-border);
+  transition: border-color .15s;
+}
+.themeBtn:hover {
+  border-color: var(--clr-primary);
+}
+
 .adminPill {
   background: var(--clr-primary);
   color: #fff;
