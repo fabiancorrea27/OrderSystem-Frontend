@@ -13,6 +13,8 @@ export default function CatalogPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const { addItem, items } = useCart();
+  const [adding, setAdding] = useState<string | null>(null);
+  const [qty, setQty] = useState(1);
   const [added, setAdded] = useState<string | null>(null);
 
   useEffect(() => {
@@ -22,8 +24,21 @@ export default function CatalogPage() {
       .finally(() => setLoading(false));
   }, []);
 
-  function handleAdd(product: Product) {
-    addItem(product);
+  function handleStartAdd(productId: string) {
+    setAdding(productId);
+    setQty(1);
+  }
+
+  function handleCancelAdd() {
+    setAdding(null);
+    setQty(1);
+  }
+
+  function handleConfirmAdd(product: Product) {
+    const quantity = Math.min(qty, product.stock);
+    addItem(product, quantity);
+    setAdding(null);
+    setQty(1);
     setAdded(product.id);
     setTimeout(() => setAdded(null), 1200);
   }
@@ -49,14 +64,15 @@ export default function CatalogPage() {
 
       <div className={styles.grid}>
         {sorted.map((product) => {
-          const qty = getQtyInCart(product.id);
+          const cartQty = getQtyInCart(product.id);
+          const isAdding = adding === product.id;
           const isJustAdded = added === product.id;
           return (
             <article key={product.id} className={`${styles.card} ${product.stock === 0 ? styles.cardDisabled : ''}`}>
               <div className={styles.cardImg}>
                 <span className={styles.productEmoji}>📦</span>
-                {qty > 0 && (
-                  <span className={styles.cartBadge}>{qty}</span>
+                {cartQty > 0 && (
+                  <span className={styles.cartBadge}>{cartQty}</span>
                 )}
               </div>
               <div className={styles.cardBody}>
@@ -71,13 +87,38 @@ export default function CatalogPage() {
                 ) : null}
               </div>
               <div className={styles.cardFooter}>
-                <button
-                  className={`${styles.addBtn} ${isJustAdded ? styles.addBtnDone : ''} ${product.stock === 0 ? styles.addBtnDisabled : ''}`}
-                  onClick={() => handleAdd(product)}
-                  disabled={product.stock === 0}
-                >
-                  {product.stock === 0 ? 'Agotado' : isJustAdded ? '✓ Agregado' : 'Agregar al carrito'}
-                </button>
+                {isAdding ? (
+                  <div className={styles.selector}>
+                    <div className={styles.stepper}>
+                      <button
+                        className={styles.stepBtn}
+                        onClick={() => setQty((v) => Math.max(1, v - 1))}
+                        disabled={qty <= 1}
+                      >−</button>
+                      <span className={styles.stepValue}>{qty}</span>
+                      <button
+                        className={styles.stepBtn}
+                        onClick={() => setQty((v) => Math.min(product.stock, v + 1))}
+                        disabled={qty >= product.stock}
+                      >+</button>
+                    </div>
+                    <button
+                      className={styles.confirmBtn}
+                      onClick={() => handleConfirmAdd(product)}
+                    >
+                      {isJustAdded ? '✓' : 'Agregar'}
+                    </button>
+                    <button className={styles.cancelBtn} onClick={handleCancelAdd}>✕</button>
+                  </div>
+                ) : (
+                  <button
+                    className={`${styles.addBtn} ${isJustAdded ? styles.addBtnDone : ''} ${product.stock === 0 ? styles.addBtnDisabled : ''}`}
+                    onClick={() => handleStartAdd(product.id)}
+                    disabled={product.stock === 0}
+                  >
+                    {product.stock === 0 ? 'Agotado' : isJustAdded ? '✓ Agregado' : 'Agregar al carrito'}
+                  </button>
+                )}
               </div>
             </article>
           );
