@@ -41,7 +41,7 @@
 
 .rowFields {
   display: flex;
-  gap: 20px;
+  gap: 12px;
 }
 .rowFields .field {
   flex: 1;
@@ -71,17 +71,101 @@
   font-style: italic;
 }
 
-.backBtn {
+.input {
+  width: 100%;
+}
+
+.optional {
+  font-weight: 400;
+  font-size: 11px;
+  color: var(--clr-muted);
+}
+
+.fieldset {
+  border: 1.5px solid var(--clr-border);
+  border-radius: var(--radius-sm);
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.fieldsetLegend {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--clr-neutral);
+  padding: 0 6px;
+}
+
+.error {
+  font-size: 13px;
+  color: var(--clr-danger);
+  background: var(--clr-danger-lt);
+  border-radius: var(--radius-sm);
+  padding: 8px 12px;
+  margin-top: 20px;
+}
+
+.actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 28px;
+}
+
+.editBtn {
   background: var(--clr-primary);
   color: #fff;
   padding: 11px;
   font-size: 15px;
   font-weight: 600;
   width: 100%;
-  margin-top: 28px;
+}
+.editBtn:hover {
+  background: var(--clr-primary-dk);
+}
+
+.saveBtn {
+  background: var(--clr-primary);
+  color: #fff;
+  padding: 11px;
+  font-size: 15px;
+  font-weight: 600;
+  width: 100%;
+}
+.saveBtn:disabled {
+  opacity: .6;
+}
+.saveBtn:hover:not(:disabled) {
+  background: var(--clr-primary-dk);
+}
+
+.cancelBtn {
+  background: none;
+  color: var(--clr-muted);
+  border: 1.5px solid var(--clr-border);
+  padding: 11px;
+  font-size: 15px;
+  font-weight: 500;
+  width: 100%;
+}
+.cancelBtn:hover:not(:disabled) {
+  border-color: var(--clr-danger);
+  color: var(--clr-danger);
+}
+
+.backBtn {
+  background: none;
+  color: var(--clr-muted);
+  border: 1.5px solid var(--clr-border);
+  padding: 11px;
+  font-size: 15px;
+  font-weight: 500;
+  width: 100%;
 }
 .backBtn:hover {
-  background: var(--clr-primary-dk);
+  border-color: var(--clr-neutral);
+  color: var(--clr-neutral);
 }
 
 .loading {

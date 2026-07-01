@@ -6,6 +6,7 @@ interface AuthContextType {
   token: string | null;
   login: (token: string) => void;
   logout: () => void;
+  updateUser: (data: Partial<User>) => void;
   isAdmin: boolean;
 }
 
@@ -51,10 +52,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setUser(null);
   }, []);
 
+  const updateUser = useCallback((data: Partial<User>) => {
+    setUser((prev) => (prev ? { ...prev, ...data } : null));
+  }, []);
+
   const isAdmin = user?.role === 'Admin';
 
   return (
-    <AuthContext.Provider value={{ user, token, login, logout, isAdmin }}>
+    <AuthContext.Provider value={{ user, token, login, logout, updateUser, isAdmin }}>
       {children}
     </AuthContext.Provider>
   );

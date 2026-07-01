@@ -22,4 +22,15 @@ export const authService = {
     const res = await api.get('/auth/profile');
     return res.data;
   },
+
+  async updateProfile(data: {
+    firstName: string;
+    lastName: string;
+    email: string;
+    address?: Address;
+    phone?: string;
+  }): Promise<User> {
+    const res = await api.put('/auth/profile', data);
+    return res.data;
+  },
 };
