@@ -93,22 +93,6 @@
 
 .input { width: 100%; }
 
-.error {
-  font-size: 13px;
-  color: var(--clr-danger);
-  background: var(--clr-danger-lt);
-  border-radius: var(--radius-sm);
-  padding: 8px 12px;
-}
-
-.successMsg {
-  font-size: 13px;
-  color: var(--clr-primary-dk);
-  background: var(--clr-primary-lt);
-  border-radius: var(--radius-sm);
-  padding: 8px 12px;
-}
-
 .createBtn {
   background: var(--clr-accent);
   color: #fff;
@@ -146,10 +130,17 @@
 
 .productIcon { font-size: 20px; }
 
-.productName {
+.productInfo {
   flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+
+.productName {
   font-size: 14px;
-  font-weight: 500;
+  font-weight: 600;
   color: var(--clr-neutral);
 }
 
@@ -157,14 +148,6 @@
   font-size: 14px;
   font-weight: 700;
   color: var(--clr-primary);
-}
-
-/* Stock layout and controls */
-.productInfo {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  min-width: 0;
 }
 
 .productStock {
@@ -191,30 +174,44 @@
   margin-left: 6px;
 }
 
-.stockUpdate {
+.inlineControls {
   display: flex;
-  gap: 8px;
-  align-items: center;
+  flex-direction: column;
+  gap: 6px;
   margin-left: auto;
 }
 
+.controlRow {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+
 .inputSmall {
-  width: 96px;
+  width: 80px;
   padding: 6px 8px;
   border: 1px solid var(--clr-border);
   border-radius: 6px;
   background: var(--clr-surface);
+  font-size: 13px;
 }
 
-.stockBtn {
-  background: var(--clr-primary);
+.stockBtn, .priceBtn {
   color: #fff;
   padding: 6px 10px;
   border-radius: 6px;
   font-weight: 700;
+  font-size: 12px;
   border: none;
 }
-.stockBtn:hover:not(:disabled) { background: var(--clr-primary-dk); }
+.stockBtn {
+  background: var(--clr-primary);
+}
+.stockBtn:hover:not(:disabled) { background: var(--clr-primary-hover); }
+.priceBtn {
+  background: var(--clr-accent);
+}
+.priceBtn:hover:not(:disabled) { background: #cf5c3f; }
 
 /* Alert box for low stock */
 .alertBox {
@@ -248,4 +245,4 @@
   font-size: 14px;
   margin-top: 4px;
 }
-.backBtn:hover { background: var(--clr-primary-dk); }
+.backBtn:hover { background: var(--clr-primary-hover); }

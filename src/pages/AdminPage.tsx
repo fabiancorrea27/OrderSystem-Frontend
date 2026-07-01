@@ -2,6 +2,7 @@ import { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { productService } from '../services/productService';
 import { useAuth } from '../context/AuthContext';
+import { useToast, default as Toast } from '../components/Toast';
 import type { Product } from '../types';
 import styles from './AdminPage.module.css';
 
@@ -13,9 +14,10 @@ export default function AdminPage() {
   const [price, setPrice] = useState('');
   const [stock, setStock] = useState('');
   const [stockInputs, setStockInputs] = useState<Record<string, string>>({});
-  const [error, setError] = useState('');
-  const [success, setSuccess] = useState('');
+  const [priceInputs, setPriceInputs] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(false);
+
+  const { toast, exiting, show: showToast } = useToast();
 
   useEffect(() => {
     if (!isAdmin) return;
@@ -41,26 +43,24 @@ export default function AdminPage() {
 
   async function handleSubmit(e: React.SyntheticEvent) {
     e.preventDefault();
-    setError('');
-    setSuccess('');
 
     const priceNum = parseFloat(price);
     const stockNum = parseInt(stock, 10);
 
-    if (!name.trim()) { setError('El nombre es obligatorio.'); return; }
-    if (isNaN(priceNum) || priceNum <= 0) { setError('El precio debe ser mayor que 0.'); return; }
-    if (isNaN(stockNum) || stockNum < 0) { setError('El stock debe ser 0 o mayor.'); return; }
+    if (!name.trim()) { showToast('El nombre es obligatorio.', 'error'); return; }
+    if (isNaN(priceNum) || priceNum <= 0) { showToast('El precio debe ser mayor que 0.', 'error'); return; }
+    if (isNaN(stockNum) || stockNum < 0) { showToast('El stock debe ser 0 o mayor.', 'error'); return; }
 
     setLoading(true);
     try {
       const created = await productService.create(name.trim(), priceNum, stockNum);
       setProducts((prev) => [...prev, created]);
-      setSuccess(`Producto "${created.name}" creado correctamente.`);
+      showToast(`Producto "${created.name}" creado correctamente.`, 'success');
       setName('');
       setPrice('');
       setStock('');
     } catch {
-      setError('No se pudo crear el producto.');
+      showToast('No se pudo crear el producto.', 'error');
     } finally {
       setLoading(false);
     }
@@ -68,6 +68,8 @@ export default function AdminPage() {
 
   return (
     <main className={styles.main}>
+      {toast && <Toast data={toast} exiting={exiting} />}
+
       <div className={styles.pageHeader}>
         <div>
           <h1 className={styles.title}>Panel de administración</h1>
@@ -119,9 +121,6 @@ export default function AdminPage() {
               />
             </div>
 
-            {error && <p className={styles.error}>{error}</p>}
-            {success && <p className={styles.successMsg}>{success}</p>}
-
             <button type="submit" className={styles.createBtn} disabled={loading}>
               {loading ? 'Creando...' : '+ Crear producto'}
             </button>
@@ -155,41 +154,78 @@ export default function AdminPage() {
                       )}
                     </span>
                   </div>
-                  <div className={styles.stockUpdate}>
-                    <input
-                      type="number"
-                      min="0"
-                      value={stockInputs[p.id] ?? ''}
-                      onChange={(e) => setStockInputs((prev) => ({ ...prev, [p.id]: e.target.value }))}
-                      placeholder="Nueva cantidad"
-                      className={styles.inputSmall}
-                    />
-                    <button
-                      type="button"
-                      className={styles.stockBtn}
-                      onClick={async () => {
-                        const value = parseInt(stockInputs[p.id] ?? '', 10);
-                        if (Number.isNaN(value) || value < 0) {
-                          setError('El stock debe ser 0 o mayor.');
-                          return;
-                        }
-                        setError('');
-                        setLoading(true);
-                        try {
-                          const updated = await productService.updateStock(p.id, value);
-                          setProducts((prev) => prev.map((item) => (item.id === updated.id ? updated : item)));
-                          setSuccess(`Stock actualizado para ${updated.name}.`);
-                          setStockInputs((prev) => ({ ...prev, [p.id]: '' }));
-                        } catch {
-                          setError('No se pudo actualizar el stock.');
-                        } finally {
-                          setLoading(false);
-                        }
-                      }}
-                      disabled={loading}
-                    >
-                      Guardar
-                    </button>
+                  <div className={styles.inlineControls}>
+                    <div className={styles.controlRow}>
+                      <input
+                        type="number"
+                        min="0"
+                        value={stockInputs[p.id] ?? ''}
+                        onChange={(e) => setStockInputs((prev) => ({ ...prev, [p.id]: e.target.value }))}
+                        placeholder="Stock"
+                        className={styles.inputSmall}
+                      />
+                      <button
+                        type="button"
+                        className={styles.stockBtn}
+                        onClick={async () => {
+                          const value = parseInt(stockInputs[p.id] ?? '', 10);
+                          if (Number.isNaN(value) || value < 0) {
+                            showToast('El stock debe ser 0 o mayor.', 'error');
+                            return;
+                          }
+                          setLoading(true);
+                          try {
+                            const updated = await productService.updateStock(p.id, value);
+                            setProducts((prev) => prev.map((item) => (item.id === updated.id ? updated : item)));
+                            showToast(`Stock actualizado para ${updated.name}.`, 'success');
+                            setStockInputs((prev) => ({ ...prev, [p.id]: '' }));
+                          } catch {
+                            showToast('No se pudo actualizar el stock.', 'error');
+                          } finally {
+                            setLoading(false);
+                          }
+                        }}
+                        disabled={loading}
+                      >
+                        Stock
+                      </button>
+                    </div>
+                    <div className={styles.controlRow}>
+                      <input
+                        type="number"
+                        min="0"
+                        step="0.01"
+                        value={priceInputs[p.id] ?? ''}
+                        onChange={(e) => setPriceInputs((prev) => ({ ...prev, [p.id]: e.target.value }))}
+                        placeholder="Precio"
+                        className={styles.inputSmall}
+                      />
+                      <button
+                        type="button"
+                        className={styles.priceBtn}
+                        onClick={async () => {
+                          const value = parseFloat(priceInputs[p.id] ?? '');
+                          if (isNaN(value) || value <= 0) {
+                            showToast('El precio debe ser mayor que 0.', 'error');
+                            return;
+                          }
+                          setLoading(true);
+                          try {
+                            const updated = await productService.updatePrice(p.id, value);
+                            setProducts((prev) => prev.map((item) => (item.id === updated.id ? updated : item)));
+                            showToast(`Precio actualizado para ${updated.name}.`, 'success');
+                            setPriceInputs((prev) => ({ ...prev, [p.id]: '' }));
+                          } catch {
+                            showToast('No se pudo actualizar el precio.', 'error');
+                          } finally {
+                            setLoading(false);
+                          }
+                        }}
+                        disabled={loading}
+                      >
+                        Precio
+                      </button>
+                    </div>
                   </div>
                 </div>
               ))}

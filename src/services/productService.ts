@@ -16,4 +16,9 @@ export const productService = {
     const res = await api.put(`/products/${productId}/stock`, { stock });
     return res.data;
   },
+
+  async updatePrice(productId: string, price: number): Promise<Product> {
+    const res = await api.put(`/products/${productId}/price`, { price });
+    return res.data;
+  },
 };
