@@ -13,6 +13,7 @@
   --clr-primary:   #2D6A4F;
   --clr-primary-lt:#D8EDDF;
   --clr-primary-dk:#1B4332;
+  --clr-primary-hover:#1B4332;
 
   --clr-accent:    #E76F51;
   --clr-accent-lt: #FDEBD9;
@@ -46,6 +47,7 @@
   --clr-primary:   #52B788;
   --clr-primary-lt:#1F3D38;
   --clr-primary-dk:#D8EDDF;
+  --clr-primary-hover:#2D8B5E;
 
   --clr-accent:    #E76F51;
   --clr-accent-lt: #3D221C;

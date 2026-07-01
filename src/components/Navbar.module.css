@@ -163,5 +163,5 @@
   font-size: 14px;
 }
 .registerBtn:hover {
-  background: var(--clr-primary-dk);
+  background: var(--clr-primary-hover);
 }
