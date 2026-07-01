@@ -1,11 +1,14 @@
-import { createContext, useContext, useState, useCallback, useEffect, type ReactNode } from 'react';
-import type { CartItem, Product } from '../types';
+import { createContext, useContext, useState, useCallback, useEffect, useRef, type ReactNode } from 'react';
+import type { CartItem, Product, ApiCartItem } from '../types';
+import { useAuth } from './AuthContext';
+import { cartService } from '../services/cartService';
 
 interface CartContextType {
   items: CartItem[];
   addItem: (product: Product, quantity?: number) => void;
   removeItem: (productId: string) => void;
   updateQty: (productId: string, qty: number) => void;
+  updateItemPrice: (productId: string, newPrice: number) => void;
   clearCart: () => void;
   total: number;
   count: number;
@@ -24,46 +27,159 @@ function loadCart(): CartItem[] {
   }
 }
 
+function apiItemToCartItem(api: ApiCartItem): CartItem {
+  return {
+    product: {
+      id: api.productId,
+      name: api.productName,
+      price: api.price,
+      stock: api.stock,
+    },
+    quantity: api.quantity,
+    currentPrice: api.currentPrice,
+  };
+}
+
 export function CartProvider({ children }: { children: ReactNode }) {
-  const [items, setItems] = useState<CartItem[]>(loadCart);
+  const { user } = useAuth();
+  const isLoggedIn = !!user;
+  const [items, setItems] = useState<CartItem[]>(() => (user ? [] : loadCart()));
+
+  // Track previous user ID to detect login/logout
+  const prevId = useRef(user?.id ?? null);
+  const initDone = useRef(false);
 
   useEffect(() => {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
-  }, [items]);
+    const uid = user?.id ?? null;
+    const prev = prevId.current;
+    prevId.current = uid;
 
-  const addItem = useCallback((product: Product, quantity = 1) => {
-    setItems((prev) => {
-      const existing = prev.find((i) => i.product.id === product.id);
-      if (existing) {
-        return prev.map((i) =>
-          i.product.id === product.id ? { ...i, quantity: i.quantity + quantity } : i
+    if (uid === prev && initDone.current) return;
+
+    if (!uid) {
+      setItems(loadCart());
+      initDone.current = true;
+      return;
+    }
+
+    // Logged in — load or merge
+    if (!prev && loadCart().length > 0) {
+      const local = loadCart();
+      cartService
+        .merge(local.map((i) => ({ productId: i.product.id, quantity: i.quantity })))
+        .then((apiCart) => {
+          setItems(apiCart.items.map(apiItemToCartItem));
+          localStorage.removeItem(STORAGE_KEY);
+        })
+        .catch(() => cartService.getCart().then((c) => setItems(c.items.map(apiItemToCartItem))))
+        .finally(() => { initDone.current = true; });
+    } else {
+      cartService
+        .getCart()
+        .then((c) => setItems(c.items.map(apiItemToCartItem)))
+        .catch(() => setItems([]))
+        .finally(() => { initDone.current = true; });
+    }
+  }, [user?.id]);
+
+  // Persist to localStorage when offline
+  useEffect(() => {
+    if (!isLoggedIn) {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
+    }
+  }, [items, isLoggedIn]);
+
+  const addItem = useCallback(
+    async (product: Product, quantity = 1) => {
+      if (isLoggedIn) {
+        try {
+          const apiCart = await cartService.addItem(product.id, quantity);
+          setItems(apiCart.items.map(apiItemToCartItem));
+        } catch { /* keep existing state */ }
+      } else {
+        setItems((prev) => {
+          const existing = prev.find((i) => i.product.id === product.id);
+          if (existing) {
+            return prev.map((i) =>
+              i.product.id === product.id ? { ...i, quantity: i.quantity + quantity } : i
+            );
+          }
+          return [...prev, { product, quantity }];
+        });
+      }
+    },
+    [isLoggedIn]
+  );
+
+  const removeItem = useCallback(
+    async (productId: string) => {
+      if (isLoggedIn) {
+        try {
+          const apiCart = await cartService.removeItem(productId);
+          setItems(apiCart.items.map(apiItemToCartItem));
+        } catch { /* keep existing state */ }
+      } else {
+        setItems((prev) => prev.filter((i) => i.product.id !== productId));
+      }
+    },
+    [isLoggedIn]
+  );
+
+  const updateQty = useCallback(
+    async (productId: string, qty: number) => {
+      if (qty <= 0) {
+        removeItem(productId);
+        return;
+      }
+
+      if (isLoggedIn) {
+        try {
+          const apiCart = await cartService.updateQty(productId, qty);
+          setItems(apiCart.items.map(apiItemToCartItem));
+        } catch { /* keep existing state */ }
+      } else {
+        setItems((prev) =>
+          prev.map((i) => (i.product.id === productId ? { ...i, quantity: qty } : i))
         );
       }
-      return [...prev, { product, quantity }];
-    });
-  }, []);
+    },
+    [isLoggedIn, removeItem]
+  );
 
-  const removeItem = useCallback((productId: string) => {
-    setItems((prev) => prev.filter((i) => i.product.id !== productId));
-  }, []);
+  const updateItemPrice = useCallback(
+    async (productId: string, newPrice: number) => {
+      if (isLoggedIn) {
+        try {
+          const apiCart = await cartService.updateItemPrice(productId, newPrice);
+          setItems(apiCart.items.map(apiItemToCartItem));
+        } catch { /* keep existing state */ }
+      } else {
+        setItems((prev) =>
+          prev.map((i) =>
+            i.product.id === productId
+              ? { ...i, product: { ...i.product, price: newPrice }, currentPrice: newPrice }
+              : i
+          )
+        );
+      }
+    },
+    [isLoggedIn]
+  );
 
-  const updateQty = useCallback((productId: string, qty: number) => {
-    if (qty <= 0) {
-      setItems((prev) => prev.filter((i) => i.product.id !== productId));
-    } else {
-      setItems((prev) =>
-        prev.map((i) => (i.product.id === productId ? { ...i, quantity: qty } : i))
-      );
+  const clearCart = useCallback(async () => {
+    if (isLoggedIn) {
+      try {
+        await cartService.clearCart();
+      } catch { /* ignore */ }
     }
-  }, []);
-
-  const clearCart = useCallback(() => setItems([]), []);
+    setItems([]);
+  }, [isLoggedIn]);
 
   const total = items.reduce((acc, i) => acc + i.product.price * i.quantity, 0);
   const count = items.reduce((acc, i) => acc + i.quantity, 0);
 
   return (
-    <CartContext.Provider value={{ items, addItem, removeItem, updateQty, clearCart, total, count }}>
+    <CartContext.Provider       value={{ items, addItem, removeItem, updateQty, updateItemPrice, clearCart, total, count }}>
       {children}
     </CartContext.Provider>
   );

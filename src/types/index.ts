@@ -23,6 +23,23 @@ export interface Order {
 export interface CartItem {
   product: Product;
   quantity: number;
+  currentPrice?: number;
+}
+
+export interface ApiCartItem {
+  productId: string;
+  productName: string;
+  price: number;
+  currentPrice: number;
+  quantity: number;
+  stock: number;
+  subtotal: number;
+}
+
+export interface ApiCart {
+  id: string;
+  userId: string;
+  items: ApiCartItem[];
 }
 
 export interface Address {
