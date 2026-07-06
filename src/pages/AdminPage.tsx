@@ -16,6 +16,7 @@ export default function AdminPage() {
   const [stockInputs, setStockInputs] = useState<Record<string, string>>({});
   const [priceInputs, setPriceInputs] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(false);
+  const [showLowStockOnly, setShowLowStockOnly] = useState(false);
 
   const { toast, exiting, show: showToast } = useToast();
 
@@ -27,6 +28,11 @@ export default function AdminPage() {
   const lowStockProducts = useMemo(
     () => products.filter((product) => product.stock <= 12),
     [products],
+  );
+
+  const displayedProducts = useMemo(
+    () => showLowStockOnly ? lowStockProducts : products,
+    [products, lowStockProducts, showLowStockOnly],
   );
 
   if (!isAdmin) {
@@ -129,15 +135,28 @@ export default function AdminPage() {
 
         {/* Products list */}
         <section className={styles.listCard}>
-          <h2 className={styles.sectionTitle}>
-            Productos registrados
-            <span className={styles.countBadge}>{products.length}</span>
-          </h2>
-          {products.length === 0 ? (
-            <p className={styles.emptyList}>No hay productos aún.</p>
+          <div className={styles.sectionTitle}>
+            <h2>Productos registrados</h2>
+            <span className={styles.countBadge}>
+              {showLowStockOnly ? lowStockProducts.length : products.length}
+            </span>
+            {lowStockProducts.length > 0 && (
+              <button
+                type="button"
+                className={`${styles.filterBtn} ${showLowStockOnly ? styles.filterBtnActive : ''}`}
+                onClick={() => setShowLowStockOnly((v) => !v)}
+              >
+                ⚠ Stock bajo ({lowStockProducts.length})
+              </button>
+            )}
+          </div>
+          {displayedProducts.length === 0 ? (
+            <p className={styles.emptyList}>
+              {showLowStockOnly ? 'No hay productos con stock bajo.' : 'No hay productos aún.'}
+            </p>
           ) : (
             <div className={styles.productList}>
-              {products.map((p) => (
+              {displayedProducts.map((p) => (
                 <div key={p.id} className={styles.productRow}>
                   <span className={styles.productIcon}>📦</span>
                   <div className={styles.productInfo}>
@@ -229,11 +248,6 @@ export default function AdminPage() {
                   </div>
                 </div>
               ))}
-            </div>
-          )}
-          {lowStockProducts.length > 0 && (
-            <div className={styles.alertBox}>
-              <strong>Atención:</strong> {lowStockProducts.length} producto{lowStockProducts.length === 1 ? '' : 's'} con stock bajo (≤ 12).
             </div>
           )}
         </section>
