@@ -18,6 +18,7 @@ export interface Order {
   createdAt: string;
   items: OrderItem[];
   total: number;
+  shippingAddress?: Address;
 }
 
 export interface CartItem {
@@ -55,5 +56,6 @@ export interface User {
   firstName: string;
   lastName: string;
   address?: Address;
+  addresses?: Address[];
   phone?: string;
 }

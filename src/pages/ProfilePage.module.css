@@ -13,7 +13,7 @@
   border-radius: var(--radius-lg);
   padding: 40px 36px;
   width: 100%;
-  max-width: 480px;
+  max-width: 900px;
 }
 
 .cardHeader {
@@ -34,9 +34,20 @@
 }
 
 .infoGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.sectionCard {
+  border: 1px solid var(--clr-border);
+  border-radius: var(--radius-sm);
+  padding: 14px 16px;
+  background: var(--clr-bg);
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 10px;
+  min-height: 100%;
 }
 
 .rowFields {
@@ -64,6 +75,94 @@
 .value {
   font-size: 15px;
   color: var(--clr-neutral);
+}
+
+.addressEditorBlock {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.addressActionsRow {
+  display: flex;
+  gap: 8px;
+}
+
+.secondaryBtn {
+  background: var(--clr-primary);
+  color: #fff;
+  padding: 8px 12px;
+  font-size: 13px;
+  font-weight: 600;
+}
+.secondaryBtn:hover { background: var(--clr-primary-hover); }
+
+.ghostBtn {
+  background: none;
+  border: 1px solid var(--clr-border);
+  color: var(--clr-muted);
+  padding: 8px 12px;
+  font-size: 13px;
+}
+.ghostBtn:hover { border-color: var(--clr-primary); color: var(--clr-primary); }
+
+.addressListEditor {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.addressItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  border: 1px solid var(--clr-border);
+  border-radius: var(--radius-sm);
+  background: var(--clr-bg);
+}
+
+.addressMeta {
+  font-size: 12px;
+  color: var(--clr-muted);
+  margin-top: 2px;
+}
+
+.addressItemActions {
+  display: flex;
+  gap: 8px;
+}
+
+.linkBtn {
+  background: none;
+  color: var(--clr-primary);
+  font-size: 12px;
+  padding: 0;
+}
+
+.linkBtnDanger {
+  background: none;
+  color: var(--clr-danger);
+  font-size: 12px;
+  padding: 0;
+}
+
+.addressList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.addressChip {
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid var(--clr-border);
+  border-radius: 999px;
+  padding: 6px 10px;
+  font-size: 12px;
+  color: var(--clr-neutral);
+  background: var(--clr-bg);
 }
 
 .muted {
@@ -111,6 +210,7 @@
   flex-direction: column;
   gap: 10px;
   margin-top: 28px;
+  grid-column: 1 / -1;
 }
 
 .editBtn {

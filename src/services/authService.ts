@@ -28,6 +28,7 @@ export const authService = {
     lastName: string;
     email: string;
     address?: Address;
+    addresses?: Address[];
     phone?: string;
   }): Promise<User> {
     const res = await api.put('/auth/profile', data);
