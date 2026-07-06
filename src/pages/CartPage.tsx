@@ -1,8 +1,11 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
 import { orderService } from '../services/orderService';
 import { useAuth } from '../context/AuthContext';
+import { authService } from '../services/authService';
+import { departments, departmentList } from '../data/colombia';
+import type { Address } from '../types';
 import styles from './CartPage.module.css';
 
 const fmt = (n: number) => n.toLocaleString('es-CO', { minimumFractionDigits: 2 });
@@ -14,6 +17,27 @@ export default function CartPage() {
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState('');
+  const [savedAddresses, setSavedAddresses] = useState<Address[]>([]);
+  const [selectedAddressId, setSelectedAddressId] = useState<string>('');
+  const [street, setStreet] = useState('');
+  const [city, setCity] = useState('');
+  const [department, setDepartment] = useState('');
+
+  useEffect(() => {
+    if (!user) return;
+    authService.getProfile()
+      .then((profile) => {
+        setSavedAddresses(profile.addresses ?? []);
+        if ((profile.addresses?.length ?? 0) > 0) {
+          setSelectedAddressId('0');
+          const first = profile.addresses![0];
+          setStreet(first.street ?? '');
+          setCity(first.city ?? '');
+          setDepartment(first.department ?? '');
+        }
+      })
+      .catch(() => undefined);
+  }, [user]);
 
   if (!user) {
     return (
@@ -48,6 +72,10 @@ export default function CartPage() {
     (i) => i.currentPrice !== undefined && i.currentPrice !== i.product.price
   );
 
+  const hasValidAddressSelection = Boolean(selectedAddressId) && (
+    selectedAddressId !== 'new' || Boolean(street.trim() && department && city)
+  );
+
   if (items.length === 0) {
     return (
       <div className={styles.state}>
@@ -60,11 +88,21 @@ export default function CartPage() {
     );
   }
 
+  const cities = department ? departments[department] ?? [] : [];
+
   async function handleCheckout() {
+    if (!hasValidAddressSelection) {
+      setError('Selecciona una dirección antes de confirmar el pedido.');
+      return;
+    }
+
     setError('');
     setLoading(true);
     try {
-      await orderService.createOrder(items);
+      const shippingAddress = (selectedAddressId === 'new')
+        ? { street: street || undefined, city: city || undefined, department: department || undefined }
+        : savedAddresses[Number(selectedAddressId)] || undefined;
+      await orderService.createOrder(items, shippingAddress);
       clearCart();
       setSuccess(true);
     } catch {
@@ -149,6 +187,71 @@ export default function CartPage() {
             </span>
           </div>
 
+          <div className={styles.addressSection}>
+            <label className={styles.addressLabel}>Dirección de envío</label>
+            <select
+              className={styles.addressSelect}
+              value={selectedAddressId}
+              onChange={(e) => {
+                const nextValue = e.target.value;
+                setSelectedAddressId(nextValue);
+                if (nextValue === 'new') {
+                  setStreet('');
+                  setCity('');
+                  setDepartment('');
+                  return;
+                }
+                const index = Number(nextValue);
+                const addr = savedAddresses[index];
+                setStreet(addr?.street ?? '');
+                setCity(addr?.city ?? '');
+                setDepartment(addr?.department ?? '');
+              }}
+            >
+              <option value="">Selecciona una dirección</option>
+              {savedAddresses.map((address, index) => (
+                <option key={`${address.street}-${index}`} value={String(index)}>
+                  {address.street || 'Sin calle'} · {address.city || 'Sin ciudad'}
+                </option>
+              ))}
+              <option value="new">Crear nueva dirección</option>
+            </select>
+
+            {selectedAddressId === 'new' && (
+              <>
+                <input
+                  className={styles.addressInput}
+                  value={street}
+                  onChange={(e) => setStreet(e.target.value)}
+                  placeholder="Calle, número, barrio"
+                />
+                <select
+                  className={styles.addressInput}
+                  value={department}
+                  onChange={(e) => { setDepartment(e.target.value); setCity(''); }}
+                >
+                  <option value="">Departamento</option>
+                  {departmentList.map((d) => (
+                    <option key={d} value={d}>{d}</option>
+                  ))}
+                </select>
+                <select
+                  className={styles.addressInput}
+                  value={city}
+                  onChange={(e) => setCity(e.target.value)}
+                  disabled={!department}
+                >
+                  <option value="">Ciudad</option>
+                  {cities.map((c) => (
+                    <option key={c} value={c}>{c}</option>
+                  ))}
+                </select>
+              </>
+            )}
+
+            <p className={styles.addressHint}>Elige una dirección guardada o crea una nueva antes de confirmar.</p>
+          </div>
+
           {error && <p className={styles.error}>{error}</p>}
 
           {hasPriceWarning && (
@@ -160,7 +263,7 @@ export default function CartPage() {
           <button
             className={styles.checkoutBtn}
             onClick={handleCheckout}
-            disabled={loading || hasPriceWarning}
+            disabled={loading || hasPriceWarning || !hasValidAddressSelection}
           >
             {loading ? 'Procesando...' : 'Confirmar pedido'}
           </button>

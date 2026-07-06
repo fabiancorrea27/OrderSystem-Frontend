@@ -52,6 +52,12 @@ export default function OrdersPage() {
     });
   }
 
+  function formatAddress(address?: { street?: string; city?: string; department?: string }) {
+    if (!address) return 'Sin dirección registrada';
+    const parts = [address.street, address.city, address.department].filter(Boolean);
+    return parts.length > 0 ? parts.join(' · ') : 'Sin dirección registrada';
+  }
+
   return (
     <main className={styles.main}>
       <h1 className={styles.title}>Mis pedidos</h1>
@@ -81,7 +87,15 @@ export default function OrdersPage() {
 
               {isOpen && (
                 <div className={styles.cardBody}>
-                  <table className={styles.table}>
+                  <div className={styles.detailsPanel}>
+                    <div className={styles.addressBlock}>
+                      <div className={styles.addressLabel}>Dirección de envío</div>
+                      <div className={styles.addressValue}>{formatAddress(order.shippingAddress)}</div>
+                    </div>
+
+                    <div className={styles.productsPanel}>
+                      <div className={styles.productsHeader}>Productos</div>
+                      <table className={styles.table}>
                     <thead>
                       <tr>
                         <th>Producto</th>
@@ -100,7 +114,10 @@ export default function OrdersPage() {
                         </tr>
                       ))}
                     </tbody>
-                  </table>
+                      </table>
+                    </div>
+                  </div>
+
                   <div className={styles.orderTotal}>
                     Total: <strong>${order.total.toLocaleString('es-CO', { minimumFractionDigits: 2 })}</strong>
                   </div>

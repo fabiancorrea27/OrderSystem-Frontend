@@ -108,6 +108,50 @@
   padding: 20px 22px 22px;
 }
 
+.detailsPanel {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.addressBlock {
+  padding: 10px 12px;
+  border: 1px dashed var(--clr-border);
+  border-radius: var(--radius-sm);
+  background: var(--clr-bg);
+  max-width: 420px;
+}
+
+.addressLabel {
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--clr-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 4px;
+}
+
+.addressValue {
+  font-size: 13px;
+  color: var(--clr-muted);
+}
+
+.productsPanel {
+  border: 1px solid var(--clr-border);
+  border-radius: var(--radius-sm);
+  background: linear-gradient(180deg, rgba(115, 103, 240, 0.04), rgba(115, 103, 240, 0.02));
+  padding: 14px 14px 8px;
+}
+
+.productsHeader {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--clr-primary-dk);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 10px;
+}
+
 .table {
   width: 100%;
   border-collapse: collapse;
@@ -117,18 +161,18 @@
 .table th {
   text-align: left;
   font-size: 11px;
-  font-weight: 600;
-  color: var(--clr-muted);
+  font-weight: 700;
+  color: var(--clr-primary-dk);
   text-transform: uppercase;
   letter-spacing: .5px;
   padding: 0 10px 10px 0;
-  border-bottom: 1px solid var(--clr-border);
+  border-bottom: 1px solid rgba(115, 103, 240, 0.2);
 }
 
 .table td {
   padding: 10px 10px 10px 0;
   color: var(--clr-neutral);
-  border-bottom: 1px solid var(--clr-bg);
+  border-bottom: 1px solid rgba(115, 103, 240, 0.08);
 }
 
 .table tr:last-child td {
