@@ -12,7 +12,9 @@ const fmt = (n: number) => n.toLocaleString('es-CO', { minimumFractionDigits: 2 
 
 export default function CartPage() {
   const navigate = useNavigate();
-  const { items, removeItem, updateQty, updateItemPrice, clearCart, total } = useCart();
+  const { items, removeItem, updateQty, updateItemPrice, clearCart, refreshCart, total } = useCart();
+
+  useEffect(() => { refreshCart(); }, [refreshCart]);
   const { user } = useAuth();
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);

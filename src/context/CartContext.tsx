@@ -10,6 +10,7 @@ interface CartContextType {
   updateQty: (productId: string, qty: number) => void;
   updateItemPrice: (productId: string, newPrice: number) => void;
   clearCart: () => void;
+  refreshCart: () => Promise<void>;
   total: number;
   count: number;
 }
@@ -175,11 +176,19 @@ export function CartProvider({ children }: { children: ReactNode }) {
     setItems([]);
   }, [isLoggedIn]);
 
+  const refreshCart = useCallback(async () => {
+    if (!isLoggedIn) return;
+    try {
+      const apiCart = await cartService.getCart();
+      setItems(apiCart.items.map(apiItemToCartItem));
+    } catch { /* keep existing state */ }
+  }, [isLoggedIn]);
+
   const total = items.reduce((acc, i) => acc + i.product.price * i.quantity, 0);
   const count = items.reduce((acc, i) => acc + i.quantity, 0);
 
   return (
-    <CartContext.Provider       value={{ items, addItem, removeItem, updateQty, updateItemPrice, clearCart, total, count }}>
+    <CartContext.Provider       value={{ items, addItem, removeItem, updateQty, updateItemPrice, clearCart, refreshCart, total, count }}>
       {children}
     </CartContext.Provider>
   );
